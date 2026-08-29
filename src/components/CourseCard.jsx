@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
+
 export default function CourseCard({
+    id,
     image,
     category,
     title,
@@ -10,7 +13,10 @@ export default function CourseCard({
     price,
 }) {
     return (
-        <div className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
+        <Link
+            to={`/course/${id}`}
+            className="block bg-white rounded-xl border border-[#E5E7EB] overflow-hidden hover:shadow-md transition"
+        >
 
             <img
                 src={image}
@@ -76,6 +82,6 @@ export default function CourseCard({
                 </div>
 
             </div>
-        </div>
+        </Link>
     );
 }

@@ -3,135 +3,59 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CourseCard from "../components/CourseCard";
 import AuthButton from "../components/AuthButton";
+import SearchSortBar from "../components/SearchSortBar";
+import { COURSES, TABS } from "../data/courses";
+import avatarUser from "../assets/avatarnavbar.png";
 import heroBg from "../assets/hero-bg.jpg";
 import bannerBg from "../assets/banner-bg.jpg";
-import course1 from "../assets/course1.png";
-import course2 from "../assets/course2.png";
-import course3 from "../assets/course3.png";
-import course4 from "../assets/course4.png";
-import course5 from "../assets/course5.png";
-import course6 from "../assets/course6.png";
-import course7 from "../assets/course7.png";
-import course8 from "../assets/course8.png";
-import avatar1 from "../assets/avatar1.png";
-import avatar2 from "../assets/avatar2.png";
-import avatar3 from "../assets/avatar3.png";
-import avatar4 from "../assets/avatar4.png";
-import avatar5 from "../assets/avatar5.png";
-import avatar6 from "../assets/avatar6.png";
-import avatar7 from "../assets/avatar7.png";
-import avatar8 from "../assets/avatar8.png";
-
-const TABS = ["Semua", "Pemasaran", "Desain", "Pengembangan Diri", "Bisnis"];
-
-const COURSES = [
-    {
-        id: 1,
-        image: course1,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "Jenna Ortega",
-        avatar: avatar1,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    },
-    {
-        id: 2,
-        image: course2,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "Jenna Ortega",
-        avatar: avatar2,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    },
-    {
-        id: 3,
-        image: course3,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "James Ortega",
-        avatar: avatar3,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    },
-    {
-        id: 4,
-        image: course4,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "James Ortega",
-        avatar: avatar4,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    },
-    {
-        id: 5,
-        image: course5,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "Jenna Ortega",
-        avatar: avatar5,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    },
-    {
-        id: 6,
-        image: course6,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "Jenna Ortega",
-        avatar: avatar6,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    },
-    {
-        id: 7,
-        image: course7,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "Jenna Ortega",
-        avatar: avatar7,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    },
-    {
-        id: 8,
-        image: course8,
-        category: "Bisnis",
-        title: "Big 4 Auditor Financial Analyst",
-        author: "Jenna Ortega",
-        avatar: avatar8,
-        job: "Senior Accountant di Gojek",
-        rating: "3.5",
-        reviews: "86",
-        price: "Rp 300K"
-    }
-];
 
 export default function Home() {
     const [activeTab, setActiveTab] = useState("Semua");
+    const [isKategoriOpen, setIsKategoriOpen] = useState(false);
+    const [sortValue, setSortValue] = useState("");
+    const [searchValue, setSearchValue] = useState("");
 
-    const filtered =
-        activeTab === "Semua" ? COURSES : COURSES.filter((c) => c.category === activeTab);
+    const parsePrice = (price) => parseInt(price.replace(/[^\d]/g, ""), 10);
+
+    let filtered =
+        activeTab === "Semua" ? [...COURSES] : COURSES.filter((c) => c.category === activeTab);
+
+    if (searchValue.trim() !== "") {
+        filtered = filtered.filter((c) =>
+            c.title.toLowerCase().includes(searchValue.trim().toLowerCase())
+        );
+    }
+
+    switch (sortValue) {
+        case "harga-rendah":
+            filtered = [...filtered].sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+            break;
+        case "harga-tinggi":
+            filtered = [...filtered].sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+            break;
+        case "az":
+            filtered = [...filtered].sort((a, b) => a.title.localeCompare(b.title));
+            break;
+        case "za":
+            filtered = [...filtered].sort((a, b) => b.title.localeCompare(a.title));
+            break;
+        case "rating-tertinggi":
+            filtered = [...filtered].sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating));
+            break;
+        case "rating-terendah":
+            filtered = [...filtered].sort((a, b) => parseFloat(a.rating) - parseFloat(b.rating));
+            break;
+        default:
+            break;
+    }
 
     return (
         <div className="min-h-screen bg-[#FDFBF5]">
-            <Navbar />
+            <Navbar
+                onToggleKategori={() => setIsKategoriOpen((prev) => !prev)}
+                isKategoriActive={isKategoriOpen}
+                avatarSrc={avatarUser}
+            />
 
             {/* HERO */}
 
@@ -157,6 +81,15 @@ export default function Home() {
                 <p className="text-[#6B7280] text-sm mt-1 mb-8">
                     Jelajahi Dunia Pengetahuan Melalui Pilihan Kami
                 </p>
+
+                {isKategoriOpen && (
+                    <SearchSortBar
+                        sortValue={sortValue}
+                        onSortChange={setSortValue}
+                        searchValue={searchValue}
+                        onSearchChange={setSearchValue}
+                    />
+                )}
 
                 <div className="flex gap-3 mb-8 flex-wrap">
                     {TABS.map((tab) => (
