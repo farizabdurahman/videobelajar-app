@@ -4,12 +4,14 @@ import Footer from "../components/Footer";
 import CourseCard from "../components/CourseCard";
 import AuthButton from "../components/AuthButton";
 import SearchSortBar from "../components/SearchSortBar";
-import { COURSES, TABS } from "../data/courses";
+import { TABS } from "../data/courses";
+import useCourses from "../hooks/useCourses";
 import avatarUser from "../assets/avatarnavbar.png";
 import heroBg from "../assets/hero-bg.jpg";
 import bannerBg from "../assets/banner-bg.jpg";
 
 export default function Home() {
+    const { courses, loading, error } = useCourses();
     const [activeTab, setActiveTab] = useState("Semua");
     const [isKategoriOpen, setIsKategoriOpen] = useState(false);
     const [sortValue, setSortValue] = useState("");
@@ -18,7 +20,7 @@ export default function Home() {
     const parsePrice = (price) => parseInt(price.replace(/[^\d]/g, ""), 10);
 
     let filtered =
-        activeTab === "Semua" ? [...COURSES] : COURSES.filter((c) => c.category === activeTab);
+        activeTab === "Semua" ? [...courses] : courses.filter((c) => c.category === activeTab);
 
     if (searchValue.trim() !== "") {
         filtered = filtered.filter((c) =>
@@ -106,11 +108,23 @@ export default function Home() {
                     ))}
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    {filtered.map((course) => (
-                        <CourseCard key={course.id} {...course} />
-                    ))}
-                </div>
+                {loading && (
+                    <p className="text-sm text-[#6B7280] py-8 text-center">Memuat data course...</p>
+                )}
+
+                {!loading && error && (
+                    <p className="text-sm text-red-500 py-8 text-center">
+                        Gagal memuat data: {error}
+                    </p>
+                )}
+
+                {!loading && !error && (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        {filtered.map((course) => (
+                            <CourseCard key={course.id} {...course} />
+                        ))}
+                    </div>
+                )}
             </section>
 
             {/* BANNER CTA */}

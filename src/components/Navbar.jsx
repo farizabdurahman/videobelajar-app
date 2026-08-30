@@ -24,6 +24,13 @@ export default function Navbar({ onToggleKategori, isKategoriActive, avatarSrc }
                             </button>
                         )}
 
+                        <Link
+                            to="/kelola-kelas"
+                            className="text-sm font-medium text-[#222325] hover:text-[#22AD5C] transition"
+                        >
+                            Kelola Kelas
+                        </Link>
+
                         {avatarSrc && (
                             <Link to="/profile" title="Profil Saya">
                                 <img

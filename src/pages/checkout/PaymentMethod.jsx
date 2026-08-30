@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import CheckoutStepper from "../../components/CheckoutStepper";
-import { COURSES } from "../../data/courses";
+import { getCourseById } from "../../services/api/courseService";
+import { enrichCourse } from "../../utils/courseHelpers";
 import { createOrder, formatRupiah, parsePriceToNumber } from "../../utils/storage";
 import avatarUser from "../../assets/avatarnavbar.png";
 import PaymentOptionRow from "../../components/PaymentOptionRow";
@@ -15,10 +16,44 @@ const WALLETS = ["Dana", "OVO", "LinkAja", "ShopeePay"];
 export default function PaymentMethod() {
     const { courseId } = useParams();
     const navigate = useNavigate();
-    const course = COURSES.find((c) => String(c.id) === courseId);
+    const [course, setCourse] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
     const [method, setMethod] = useState("");
 
-    if (!course) {
+    useEffect(() => {
+        let isMounted = true;
+        async function loadCourse() {
+            setLoading(true);
+            setNotFound(false);
+            try {
+                const data = await getCourseById(courseId);
+                if (isMounted) setCourse(enrichCourse(data));
+            } catch (err) {
+                if (isMounted) setNotFound(true);
+            } finally {
+                if (isMounted) setLoading(false);
+            }
+        }
+        loadCourse();
+        return () => {
+            isMounted = false;
+        };
+    }, [courseId]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#FDFBF5] flex flex-col">
+                <Navbar avatarSrc={avatarUser} />
+                <div className="flex-1 flex items-center justify-center">
+                    <p className="text-[#6B7280] text-sm">Memuat data kelas...</p>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    if (notFound || !course) {
         return (
             <div className="min-h-screen bg-[#FDFBF5] flex flex-col">
                 <Navbar />

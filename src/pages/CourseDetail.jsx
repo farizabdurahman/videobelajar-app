@@ -1,20 +1,66 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CourseCard from "../components/CourseCard";
-import { COURSES } from "../data/courses";
+import { getCourseById, getCourses } from "../services/api/courseService";
+import { enrichCourse, enrichCourses } from "../utils/courseHelpers";
 import avatarUser from "../assets/avatarnavbar.png";
 
 export default function CourseDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const course = COURSES.find((c) => String(c.id) === id);
+
+    const [course, setCourse] = useState(null);
+    const [related, setRelated] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
 
     // -1 = semua section tertutup, 0/1/2 = index section yang lagi kebuka
     const [openSection, setOpenSection] = useState(0);
 
-    if (!course) {
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadCourse() {
+            setLoading(true);
+            setNotFound(false);
+            try {
+                const data = await getCourseById(id);
+                if (!isMounted) return;
+                setCourse(enrichCourse(data));
+
+                const all = await getCourses();
+                if (!isMounted) return;
+                setRelated(
+                    enrichCourses(all.filter((c) => String(c.id) !== String(id))).slice(0, 3)
+                );
+            } catch (err) {
+                if (isMounted) setNotFound(true);
+            } finally {
+                if (isMounted) setLoading(false);
+            }
+        }
+
+        loadCourse();
+        return () => {
+            isMounted = false;
+        };
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#FDFBF5] flex flex-col">
+                <Navbar avatarSrc={avatarUser} />
+                <div className="flex-1 flex items-center justify-center px-6 text-center">
+                    <p className="text-[#6B7280] text-sm">Memuat detail kelas...</p>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    if (notFound || !course) {
         return (
             <div className="min-h-screen bg-[#FDFBF5] flex flex-col">
                 <Navbar />
@@ -28,8 +74,6 @@ export default function CourseDetail() {
             </div>
         );
     }
-
-    const related = COURSES.filter((c) => c.id !== course.id).slice(0, 3);
 
     const toggleSection = (index) => {
         setOpenSection((prev) => (prev === index ? -1 : index));

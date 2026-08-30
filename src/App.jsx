@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import CourseDetail from "./pages/CourseDetail";
+import KelolaKelas from "./pages/KelolaKelas";
 import Profile from "./pages/Profile";
 import MyCourses from "./pages/MyCourses";
 import Orders from "./pages/Orders";
@@ -18,6 +19,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/home" element={<Home />} />
       <Route path="/course/:id" element={<CourseDetail />} />
+      <Route path="/kelola-kelas" element={<KelolaKelas />} />
 
       {/* Akun */}
       <Route path="/profile" element={<Profile />} />

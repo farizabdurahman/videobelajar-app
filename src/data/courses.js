@@ -116,6 +116,14 @@ const RAW_COURSES = [
     }
 ];
 
+// Lookup asset lokal berdasarkan id, dipakai untuk override field
+// image/avatar dari API (yang cuma berisi teks/URL placeholder) dengan
+// file asli di src/assets — supaya UI tetap pakai gambar asli project,
+// bukan placeholder generik.
+export const LOCAL_ASSETS = Object.fromEntries(
+    RAW_COURSES.map((c) => [String(c.id), { image: c.image, avatar: c.avatar }])
+);
+
 // Tambahin detail-detail yang dipakai khusus di halaman Detail Produk
 // (deskripsi, kurikulum, review, dsb) supaya data course-nya nggak dobel ditulis.
 export const COURSES = RAW_COURSES.map((course) => {
