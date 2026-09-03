@@ -1,4 +1,5 @@
 import { FaLinkedinIn, FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa';
+import logo from '../assets/Frame 3.png';
 
 export default function Footer() {
     const categories = ["Digital & Teknologi", "Pemasaran", "Manajemen Bisnis", "Pengembangan Diri", "Desain"];
@@ -11,7 +12,7 @@ export default function Footer() {
                 <div className="flex flex-col md:flex-row justify-between gap-10">
                     <div className="max-w-[320px]">
                         <img
-                            src="src/assets/Frame 3.png"
+                            src={logo}
                             alt="Videobelajar"
                             className="h-10 w-auto"
                         />
