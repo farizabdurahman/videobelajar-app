@@ -10,11 +10,11 @@ const ORDERS_KEY = "vb_orders";
 const PROFILE_KEY = "vb_profile";
 
 const DEFAULT_PROFILE = {
-    name: "Jennie Ruby Jane",
-    email: "rubyjane@gmail.com",
+    name: "Fariz Abdurahman Fakhri",
+    email: "farizabdurahmanfakhri@gmail.com",
     countryCode: "+62",
     phone: "81234567890",
-    gender: "Perempuan",
+    gender: "Laki-laki",
 };
 
 /* ------------------------------------------------------------------ */
