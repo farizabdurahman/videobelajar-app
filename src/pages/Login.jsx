@@ -1,14 +1,14 @@
 // src/pages/Login.jsx
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ tambahkan ini
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import InputField from "../components/InputField";
 import AuthButton from "../components/AuthButton";
 import GoogleButton from "../components/GoogleButton";
 
 export default function Login() {
-    const navigate = useNavigate(); // ✅
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -16,7 +16,7 @@ export default function Login() {
     const handleLogin = () => {
         // simulasi login berhasil
         if (email && password) {
-            navigate("/home"); // ✅ ke home
+            navigate("/home");
         } else {
             alert("Isi email & password dulu");
         }
@@ -60,14 +60,14 @@ export default function Login() {
                         <AuthButton
                             text="Masuk"
                             variant="primary"
-                            onClick={handleLogin} // ✅ penting
+                            onClick={handleLogin}
                         />
 
-                        {/* PINDAH KE REGISTER */}
+
                         <AuthButton
                             text="Daftar"
                             variant="secondary"
-                            onClick={() => navigate("/register")} // ✅ ini fix utama
+                            onClick={() => navigate("/register")}
                         />
 
                         <GoogleButton />
