@@ -12,6 +12,7 @@ import Payment from "./pages/checkout/Payment";
 import ChangeMethod from "./pages/checkout/ChangeMethod";
 import PaymentResult from "./pages/checkout/PaymentResult";
 import Learning from "./pages/Learning";
+import TestPaymentEmail from "./pages/checkout/TestPaymentEmail";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         path="/checkout/:orderId/pending"
         element={<PaymentResult variant="pending" />}
       />
+      <Route path="/checkout/:orderId/test-email" element={<TestPaymentEmail />} />
     </Routes>
   );
 }

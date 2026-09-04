@@ -2,7 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import CheckoutStepper from "../../components/CheckoutStepper";
-import { getOrderById } from "../../utils/storage";
+import { getOrderById, getProfile } from "../../utils/storage";
 import avatarUser from "../../assets/avatarnavbar.png";
 
 export default function PaymentResult({ variant }) {
@@ -10,6 +10,7 @@ export default function PaymentResult({ variant }) {
     const { orderId } = useParams();
     const navigate = useNavigate();
     const order = getOrderById(orderId);
+    const profile = getProfile();
 
     const isSuccess = variant === "success";
 
@@ -45,12 +46,19 @@ export default function PaymentResult({ variant }) {
                         </p>
                     )}
 
+                    {!isSuccess && (
+                        <div className="w-full rounded-lg border border-[#E5E7EB] bg-[#F9FAFB] px-4 py-3 text-left">
+                            <p className="text-xs font-medium text-[#222325]">Email simulasi terkirim ke</p>
+                            <p className="mt-1 text-sm text-[#22AD5C]">{profile.email}</p>
+                        </div>
+                    )}
+
                     <button
                         type="button"
-                        onClick={() => navigate("/orders")}
+                        onClick={() => navigate(isSuccess ? "/orders" : `/checkout/${orderId}/test-email`)}
                         className="h-11 px-6 rounded-md bg-[#22AD5C] hover:bg-[#1c9950] text-white font-medium transition"
                     >
-                        Lihat Detail Pesanan
+                        {isSuccess ? "Lihat Detail Pesanan" : "Buka Email Simulasi"}
                     </button>
 
                     {isSuccess && (

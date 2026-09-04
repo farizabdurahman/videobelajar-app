@@ -78,15 +78,13 @@ export default function Payment() {
     }
 
     const handlePay = () => {
-        // UPDATE — simulasikan hasil pembayaran (untuk demo, tanpa payment gateway)
-        const isSuccess = Math.random() > 0.3;
-        const progress = Math.floor(Math.random() * 3) * 10; // 0/10/20
+        // Testing flow: buat tagihan tertunda dan buka email simulasi.
         updateOrder(order.id, {
-            status: isSuccess ? "success" : "pending",
-            paidAt: isSuccess ? new Date().toISOString() : null,
-            progress: isSuccess ? progress : 0,
+            status: "pending",
+            paidAt: null,
+            progress: 0,
         });
-        navigate(isSuccess ? `/checkout/${order.id}/success` : `/checkout/${order.id}/pending`);
+        navigate(`/checkout/${order.id}/pending`);
     };
 
     const toggleSection = (i) => setOpenSection((prev) => (prev === i ? -1 : i));
