@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import useCourses from "../hooks/useCourses";
+import {
+    fetchCourses,
+    createCourseThunk,
+    editCourseThunk,
+    removeCourseThunk,
+} from "../store/redux/coursesSlice";
 import { TABS } from "../data/courses";
 import avatarUser from "../assets/avatarnavbar.png";
 
@@ -21,7 +27,18 @@ const EMPTY_FORM = {
 };
 
 export default function KelolaKelas() {
-    const { courses, loading, error, createCourse, editCourse, removeCourse } = useCourses();
+    const dispatch = useDispatch();
+
+    // Ambil data courses dari state Redux (bukan lagi state lokal komponen)
+    const courses = useSelector((state) => state.courses.items);
+    const loading = useSelector((state) => state.courses.loading);
+    const error = useSelector((state) => state.courses.error);
+
+    // Panggil reducer (thunk) untuk mengambil data dari API dan
+    // menyimpannya ke state global saat komponen pertama kali dimuat.
+    useEffect(() => {
+        dispatch(fetchCourses());
+    }, [dispatch]);
 
     const [form, setForm] = useState(EMPTY_FORM);
     const [editingId, setEditingId] = useState(null); // null = mode tambah, selain itu = mode edit
@@ -71,17 +88,17 @@ export default function KelolaKelas() {
         setSubmitting(true);
         try {
             if (editingId) {
-                // UPDATE
-                await editCourse(editingId, form);
+                // UPDATE — dispatch thunk yang memanggil fungsi Edit API
+                await dispatch(editCourseThunk({ id: editingId, data: form })).unwrap();
                 setSuccessMsg(`Kelas "${form.title}" berhasil diupdate.`);
             } else {
-                // ADD (CREATE)
-                await createCourse(form);
+                // ADD (CREATE) — dispatch thunk yang memanggil fungsi Add API
+                await dispatch(createCourseThunk(form)).unwrap();
                 setSuccessMsg(`Kelas "${form.title}" berhasil ditambahkan.`);
             }
             resetForm();
         } catch (err) {
-            setFormError(err.message || "Gagal menyimpan data.");
+            setFormError(err.message || err || "Gagal menyimpan data.");
         } finally {
             setSubmitting(false);
         }
@@ -95,11 +112,12 @@ export default function KelolaKelas() {
         setFormError(null);
         setSuccessMsg(null);
         try {
-            await removeCourse(course.id);
+            // Dispatch thunk yang memanggil fungsi Delete API
+            await dispatch(removeCourseThunk(course.id)).unwrap();
             setSuccessMsg(`Kelas "${course.title}" berhasil dihapus.`);
             if (editingId === course.id) resetForm();
         } catch (err) {
-            setFormError(err.message || "Gagal menghapus data.");
+            setFormError(err.message || err || "Gagal menghapus data.");
         } finally {
             setDeletingId(null);
         }
