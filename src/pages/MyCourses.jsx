@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import AccountSidebar from "../components/AccountSidebar";
-import { getOrders, updateOrder } from "../utils/storage";
+import { getOrders } from "../utils/storage";
 import avatarUser from "../assets/avatarnavbar.png";
 
 const TABS = ["Semua Kelas", "Sedang Berjalan", "Selesai"];
@@ -12,7 +12,8 @@ const TABS = ["Semua Kelas", "Sedang Berjalan", "Selesai"];
 const loadMyCourses = () => getOrders().filter((o) => o.status === "success");
 
 export default function MyCourses() {
-    const [orders, setOrders] = useState(() => loadMyCourses());
+    const navigate = useNavigate();
+    const [orders] = useState(() => loadMyCourses());
     const [tab, setTab] = useState("Semua Kelas");
 
     const filtered = orders.filter((o) => {
@@ -21,12 +22,7 @@ export default function MyCourses() {
         return true;
     });
 
-    const handleContinue = (order) => {
-        // UPDATE — progres bertambah setiap kali "melanjutkan pembelajaran"
-        const nextProgress = Math.min(100, (order.progress || 0) + 20);
-        updateOrder(order.id, { progress: nextProgress });
-        setOrders(loadMyCourses());
-    };
+    const handleContinue = (order) => navigate(`/learning/${order.id}`);
 
     return (
         <div className="min-h-screen bg-[#FDFBF5] flex flex-col">

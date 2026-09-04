@@ -11,6 +11,7 @@ import PaymentMethod from "./pages/checkout/PaymentMethod";
 import Payment from "./pages/checkout/Payment";
 import ChangeMethod from "./pages/checkout/ChangeMethod";
 import PaymentResult from "./pages/checkout/PaymentResult";
+import Learning from "./pages/Learning";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       {/* Akun */}
       <Route path="/profile" element={<Profile />} />
       <Route path="/my-courses" element={<MyCourses />} />
+      <Route path="/learning/:orderId" element={<Learning />} />
       <Route path="/orders" element={<Orders />} />
 
       {/* Checkout flow */}
