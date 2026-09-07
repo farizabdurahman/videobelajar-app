@@ -1,52 +1,40 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CourseCard from "../components/CourseCard";
-import { getCourseById, getCourses } from "../services/api/courseService";
-import { enrichCourse, enrichCourses } from "../utils/courseHelpers";
+import { fetchCourses } from "../store/redux/coursesSlice";
 import avatarUser from "../assets/avatarnavbar.png";
 
 export default function CourseDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const [course, setCourse] = useState(null);
-    const [related, setRelated] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [notFound, setNotFound] = useState(false);
+    // Ambil semua course dari state Redux (data sudah di-enrich di slice),
+    // lalu turunkan `course` (detail) dan `related` (rekomendasi) dari situ
+    // supaya satu-satunya sumber data adalah Redux store.
+    const items = useSelector((state) => state.courses.items);
+    const storeLoading = useSelector((state) => state.courses.loading);
+    const error = useSelector((state) => state.courses.error);
 
     // -1 = semua section tertutup, 0/1/2 = index section yang lagi kebuka
     const [openSection, setOpenSection] = useState(0);
 
     useEffect(() => {
-        let isMounted = true;
-
-        async function loadCourse() {
-            setLoading(true);
-            setNotFound(false);
-            try {
-                const data = await getCourseById(id);
-                if (!isMounted) return;
-                setCourse(enrichCourse(data));
-
-                const all = await getCourses();
-                if (!isMounted) return;
-                setRelated(
-                    enrichCourses(all.filter((c) => String(c.id) !== String(id))).slice(0, 3)
-                );
-            } catch (err) {
-                if (isMounted) setNotFound(true);
-            } finally {
-                if (isMounted) setLoading(false);
-            }
+        // Kalau store masih kosong (mis. user langsung buka URL detail
+        // tanpa lewat halaman Home), fetch dulu dari API.
+        if (items.length === 0) {
+            dispatch(fetchCourses());
         }
+    }, [dispatch, items.length]);
 
-        loadCourse();
-        return () => {
-            isMounted = false;
-        };
-    }, [id]);
+    const course = items.find((c) => String(c.id) === String(id)) || null;
+    const related = items.filter((c) => String(c.id) !== String(id)).slice(0, 3);
+
+    const loading = storeLoading && items.length === 0;
+    const notFound = !loading && !error && !course;
 
     if (loading) {
         return (

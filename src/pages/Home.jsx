@@ -1,17 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CourseCard from "../components/CourseCard";
 import AuthButton from "../components/AuthButton";
 import SearchSortBar from "../components/SearchSortBar";
 import { TABS } from "../data/courses";
-import useCourses from "../hooks/useCourses";
+import { fetchCourses } from "../store/redux/coursesSlice";
 import avatarUser from "../assets/avatarnavbar.png";
 import heroBg from "../assets/hero-bg.jpg";
 import bannerBg from "../assets/banner-bg.jpg";
 
 export default function Home() {
-    const { courses, loading, error } = useCourses();
+    const dispatch = useDispatch();
+
+    // Ambil data courses dari state Redux (bukan lagi custom hook lokal)
+    const courses = useSelector((state) => state.courses.items);
+    const loading = useSelector((state) => state.courses.loading);
+    const error = useSelector((state) => state.courses.error);
+
+    // Panggil reducer (thunk) untuk mengambil data dari API dan
+    // menyimpannya ke state global saat komponen pertama kali dimuat.
+    useEffect(() => {
+        dispatch(fetchCourses());
+    }, [dispatch]);
+
     const [activeTab, setActiveTab] = useState("Semua");
     const [isKategoriOpen, setIsKategoriOpen] = useState(false);
     const [sortValue, setSortValue] = useState("");
