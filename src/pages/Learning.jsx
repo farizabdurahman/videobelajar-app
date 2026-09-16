@@ -2,34 +2,7 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getOrderById, updateOrder } from "../utils/storage";
-
-const QUESTIONS = [
-  {
-    question: "Apa tujuan utama UX design?",
-    options: ["Memperbanyak fitur", "Membuat pengalaman pengguna mudah dan bermakna", "Mengganti seluruh identitas merek", "Membuat halaman lebih panjang"],
-    answer: 1,
-  },
-  {
-    question: "Langkah awal yang tepat sebelum mendesain solusi adalah…",
-    options: ["Memilih warna", "Menulis kode", "Memahami kebutuhan dan masalah pengguna", "Membuat iklan"],
-    answer: 2,
-  },
-  {
-    question: "Persona digunakan tim produk untuk…",
-    options: ["Mewakili kelompok pengguna berdasarkan riset", "Mengukur kecepatan server", "Menentukan harga domain", "Menggantikan semua wawancara pengguna"],
-    answer: 0,
-  },
-  {
-    question: "Contoh prinsip usability yang baik adalah…",
-    options: ["Navigasi berbeda di setiap halaman", "Pesan error yang jelas dan membantu", "Semua tombol memakai ikon tanpa label", "Formulir dengan isian sebanyak mungkin"],
-    answer: 1,
-  },
-  {
-    question: "Wireframe paling bermanfaat untuk…",
-    options: ["Menguji struktur dan alur layar sejak awal", "Menentukan kampanye pemasaran", "Menghapus kebutuhan pengujian", "Menulis dokumentasi legal"],
-    answer: 0,
-  },
-];
+import { getPretestQuestions } from "../data/pretestQuestions";
 
 function Banner({ title, eyebrow, tone = "blue" }) {
   const colors = tone === "orange" ? "from-orange-300 via-amber-400 to-orange-500" : "from-cyan-300 via-teal-400 to-emerald-500";
@@ -49,6 +22,7 @@ export default function Learning() {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const order = useMemo(() => getOrderById(orderId), [orderId]);
+  const QUESTIONS = useMemo(() => getPretestQuestions(order?.courseId), [order?.courseId]);
   const [screen, setScreen] = useState("video");
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState(Array(QUESTIONS.length).fill(null));
@@ -67,7 +41,7 @@ export default function Learning() {
 
   const Shell = ({ children }) => <LearningShell courseTitle={courseTitle} screen={screen}>{children}</LearningShell>;
 
-  if (screen === "video") return <Shell><div className="overflow-hidden rounded-2xl border bg-white shadow-sm"><div className="grid lg:grid-cols-[1fr_280px]"><section><div className="flex aspect-video items-center justify-center bg-slate-900"><button onClick={() => setScreen("rules")} className="grid h-20 w-20 place-items-center rounded-full bg-white text-3xl text-emerald-600 shadow-lg">▶</button></div><div className="p-7"><p className="text-sm font-semibold text-emerald-600">4.1 VIDEO PEMBELAJARAN</p><h1 className="mt-1 text-2xl font-bold text-slate-900">Foundations of User Experience Design</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Pelajari dasar UX, cara memahami kebutuhan pengguna, dan proses membuat solusi digital yang mudah dipakai.</p><button onClick={() => setScreen("rules")} className="mt-6 rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-600">Lanjut ke materi berikutnya →</button></div></section><aside className="border-l bg-slate-50 p-5"><h2 className="font-bold text-slate-800">Daftar Modul</h2><div className="mt-4 space-y-3 text-sm"><button className="w-full rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-left font-medium text-emerald-700">✓ 4.1 Video: Foundation UX</button><button onClick={() => setScreen("rules")} className="w-full rounded-lg border bg-white p-3 text-left hover:border-emerald-400">4.2 Foundation of User Experience Design</button><button className="w-full rounded-lg border bg-white p-3 text-left text-slate-500">Pre-Test: 5 Pertanyaan</button></div></aside></div><button onClick={() => setScreen("rules")} className="w-full bg-emerald-500 px-5 py-4 text-left text-sm font-semibold text-white hover:bg-emerald-600">Foundation of User Experience Design <span className="float-right">→</span></button></div></Shell>;
+  if (screen === "video") return <Shell><div className="overflow-hidden rounded-2xl border bg-white shadow-sm"><div className="grid lg:grid-cols-[1fr_280px]"><section><div className="flex aspect-video items-center justify-center bg-slate-900"><button onClick={() => setScreen("rules")} className="grid h-20 w-20 place-items-center rounded-full bg-white text-3xl text-emerald-600 shadow-lg">▶</button></div><div className="p-7"><p className="text-sm font-semibold text-emerald-600">4.1 VIDEO PEMBELAJARAN</p><h1 className="mt-1 text-2xl font-bold text-slate-900">Foundations of User Experience Design</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Pelajari dasar UX, cara memahami kebutuhan pengguna, dan proses membuat solusi digital yang mudah dipakai.</p><button onClick={() => setScreen("rules")} className="mt-6 rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-600">Lanjut ke materi berikutnya →</button></div></section><aside className="border-l bg-slate-50 p-5"><h2 className="font-bold text-slate-800">Daftar Modul</h2><div className="mt-4 space-y-3 text-sm"><button className="w-full rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-left font-medium text-emerald-700">✓ 4.1 Video: Foundation UX</button><button onClick={() => setScreen("rules")} className="w-full rounded-lg border bg-white p-3 text-left hover:border-emerald-400">4.2 Foundation of User Experience Design</button><button className="w-full rounded-lg border bg-white p-3 text-left text-slate-500">Pre-Test: {QUESTIONS.length} Pertanyaan</button></div></aside></div><button onClick={() => setScreen("rules")} className="w-full bg-emerald-500 px-5 py-4 text-left text-sm font-semibold text-white hover:bg-emerald-600">Foundation of User Experience Design <span className="float-right">→</span></button></div></Shell>;
 
   if (screen === "rules") return <Shell><div className="overflow-hidden rounded-2xl border bg-white shadow-sm"><Banner title="RULES" eyebrow="4.2 • PRE-TEST" /><div className="max-w-2xl p-8"><h2 className="text-xl font-bold">Aturan Pre-Test</h2><p className="mt-3 text-sm leading-6 text-slate-600">Pre-test ini mengukur pemahaman awal Anda mengenai dasar User Experience Design.</p><ul className="mt-5 list-disc space-y-2 pl-5 text-sm text-slate-600"><li>Terdiri dari {QUESTIONS.length} pertanyaan pilihan ganda.</li><li>Pilih satu jawaban terbaik pada setiap pertanyaan.</li><li>Nilai kelulusan minimal adalah 80.</li><li>Anda dapat mengulang jika nilai belum mencapai batas kelulusan.</li></ul><button onClick={() => setScreen("quiz")} className="mt-7 rounded-lg bg-emerald-500 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-600">Mulai Pre-Test</button></div></div></Shell>;
 
