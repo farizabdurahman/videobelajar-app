@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CourseCard from "../components/CourseCard";
@@ -7,12 +8,44 @@ import AuthButton from "../components/AuthButton";
 import SearchSortBar from "../components/SearchSortBar";
 import { TABS } from "../data/courses";
 import { fetchCourses } from "../store/redux/coursesSlice";
+import { isLoggedIn } from "../utils/storage";
 import avatarUser from "../assets/avatarnavbar.png";
 import heroBg from "../assets/hero-bg.jpg";
 import bannerBg from "../assets/banner-bg.jpg";
 
 export default function Home() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [subscribeEmail, setSubscribeEmail] = useState("");
+    const [subscribeMessage, setSubscribeMessage] = useState("");
+
+    const requireLogin = () => navigate("/login", { state: { from: location } });
+
+    // Tombol "Temukan Video Course untuk Dipelajari": kalau belum login,
+    // diarahkan ke halaman login dulu. Kalau sudah login, langsung scroll
+    // ke koleksi video di bawah.
+    const handleFindCourse = () => {
+        if (!isLoggedIn()) {
+            requireLogin();
+            return;
+        }
+        document.getElementById("koleksi-video")?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    // Tombol "Subscribe" newsletter: butuh login juga.
+    const handleSubscribe = () => {
+        if (!isLoggedIn()) {
+            requireLogin();
+            return;
+        }
+        if (!subscribeEmail.trim()) {
+            setSubscribeMessage("Masukkan email terlebih dahulu.");
+            return;
+        }
+        setSubscribeMessage("Terima kasih sudah subscribe! Info terbaru akan kami kirim ke emailmu.");
+        setSubscribeEmail("");
+    };
 
     // Ambil data courses dari state Redux (bukan lagi custom hook lokal)
     const courses = useSelector((state) => state.courses.items);
@@ -84,12 +117,16 @@ export default function Home() {
                         Revolusi Pembelajaran: Temukan Ilmu Baru melalui Platform Video Interaktif!
                     </h1>
                     <div className="max-w-[400px] mt-6">
-                        <AuthButton text="Temukan Video Course untuk Dipelajari" variant="primary" />
+                        <AuthButton
+                            text="Temukan Video Course untuk Dipelajari"
+                            variant="primary"
+                            onClick={handleFindCourse}
+                        />
                     </div>
                 </div>
             </section>
             {/* CARD SECTION */}
-            <section className="max-w-[1440px] mx-auto px-6 md:px-[120px] py-16">
+            <section id="koleksi-video" className="max-w-[1440px] mx-auto px-6 md:px-[120px] py-16">
                 <h2 className="text-2xl font-semibold text-[#222325]">
                     Koleksi Video Pembelajaran Unggulan
                 </h2>
@@ -171,14 +208,23 @@ export default function Home() {
                             <div className="mt-8 flex bg-white rounded-lg overflow-hidden">
                                 <input
                                     type="email"
+                                    value={subscribeEmail}
+                                    onChange={(e) => setSubscribeEmail(e.target.value)}
                                     placeholder="Masukkan Emailmu"
                                     className="flex-1 px-5 py-4 text-black outline-none"
                                 />
 
-                                <button className="bg-[#FFBD3A] hover:bg-[#F4AE1D] text-white font-medium px-8">
+                                <button
+                                    type="button"
+                                    onClick={handleSubscribe}
+                                    className="bg-[#FFBD3A] hover:bg-[#F4AE1D] text-white font-medium px-8"
+                                >
                                     Subscribe
                                 </button>
                             </div>
+                            {subscribeMessage && (
+                                <p className="mt-3 text-sm text-emerald-300">{subscribeMessage}</p>
+                            )}
 
                         </div>
                     </div>

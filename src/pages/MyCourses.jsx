@@ -122,15 +122,12 @@ export default function MyCourses() {
                                             <div className="flex gap-3 mt-1">
                                                 {isDone ? (
                                                     <>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                alert(`Sertifikat "${order.courseTitle}" diunduh.`)
-                                                            }
-                                                            className="h-9 px-4 rounded-md border border-[#22AD5C] text-[#22AD5C] text-sm font-medium"
+                                                        <Link
+                                                            to={`/certificate/${order.id}`}
+                                                            className="h-9 px-4 rounded-md border border-[#22AD5C] text-[#22AD5C] text-sm font-medium flex items-center"
                                                         >
                                                             Unduh Sertifikat
-                                                        </button>
+                                                        </Link>
                                                         <Link
                                                             to={`/course/${order.courseId}`}
                                                             className="h-9 px-4 rounded-md bg-[#22AD5C] text-white text-sm font-medium flex items-center"

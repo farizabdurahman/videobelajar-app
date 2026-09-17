@@ -8,6 +8,7 @@
 
 const ORDERS_KEY = "vb_orders";
 const PROFILE_KEY = "vb_profile";
+const AUTH_KEY = "vb_auth";
 
 const DEFAULT_PROFILE = {
     name: "Fariz Abdurahman Fakhri",
@@ -58,6 +59,28 @@ export function updateProfile(updates) {
     const next = { ...current, ...updates };
     writeJSON(PROFILE_KEY, next);
     return next;
+}
+
+/* ------------------------------------------------------------------ */
+/* AUTH — simulasi login/logout (tanpa backend, disimpan di localStorage) */
+/* ------------------------------------------------------------------ */
+
+// Dipanggil setelah submit form Login/Register berhasil (simulasi).
+// Kalau ada data (nama/email) dikirim, dipakai buat update profil juga
+// supaya nama yang muncul di Navbar/Sertifikat konsisten dengan yang
+// diisi user di form.
+export function login(updates = {}) {
+    const profile = updateProfile(updates);
+    writeJSON(AUTH_KEY, { loggedIn: true, since: new Date().toISOString() });
+    return profile;
+}
+
+export function logout() {
+    localStorage.removeItem(AUTH_KEY);
+}
+
+export function isLoggedIn() {
+    return Boolean(readJSON(AUTH_KEY, null)?.loggedIn);
 }
 
 /* ------------------------------------------------------------------ */

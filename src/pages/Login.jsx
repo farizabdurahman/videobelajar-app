@@ -1,22 +1,30 @@
 // src/pages/Login.jsx
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import InputField from "../components/InputField";
 import AuthButton from "../components/AuthButton";
 import GoogleButton from "../components/GoogleButton";
+import { login } from "../utils/storage";
 
 export default function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    // Halaman asal yang bikin user dilempar ke sini (avatar/subscribe/
+    // temukan video/beli kelas). Kalau tidak ada, default ke /home.
+    const from = location.state?.from;
+    const redirectTo = from ? `${from.pathname || ""}${from.search || ""}` || "/home" : "/home";
+
     const handleLogin = () => {
         // simulasi login berhasil
         if (email && password) {
-            navigate("/home");
+            login({ email });
+            navigate(redirectTo, { replace: true });
         } else {
             alert("Isi email & password dulu");
         }
@@ -67,10 +75,17 @@ export default function Login() {
                         <AuthButton
                             text="Daftar"
                             variant="secondary"
-                            onClick={() => navigate("/register")}
+                            onClick={() => navigate("/register", { state: { from } })}
                         />
 
-                        <GoogleButton />
+                        <GoogleButton onClick={handleLogin} />
+
+                        <p className="text-center text-xs text-[#6B7280]">
+                            Ingin lihat-lihat dulu?{" "}
+                            <Link to="/home" className="text-[#22AD5C] underline">
+                                Kembali ke Beranda
+                            </Link>
+                        </p>
 
                     </div>
                 </div>

@@ -1,8 +1,10 @@
 // src/components/GoogleButton.jsx
 
-export default function GoogleButton() {
+export default function GoogleButton({ text = "Masuk dengan Google", onClick }) {
     return (
         <button
+            type="button"
+            onClick={onClick}
             className="
         h-12
         border
@@ -23,7 +25,7 @@ export default function GoogleButton() {
             />
 
             <span className="text-sm font-medium">
-                Masuk dengan Google
+                {text}
             </span>
         </button>
     );

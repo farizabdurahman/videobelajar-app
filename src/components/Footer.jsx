@@ -1,5 +1,12 @@
+import { Link } from 'react-router-dom';
 import { FaLinkedinIn, FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa';
 import logo from '../assets/Frame 3.png';
+
+// Link internal (pakai React Router) dipetakan di sini; selain itu
+// masih pakai anchor "#" placeholder seperti sebelumnya.
+const INTERNAL_LINKS = {
+    "Tentang Kami": "/tentang-kami",
+};
 
 export default function Footer() {
     const categories = ["Digital & Teknologi", "Pemasaran", "Manajemen Bisnis", "Pengembangan Diri", "Desain"];
@@ -38,13 +45,21 @@ export default function Footer() {
                         </div>
                         <div className="flex flex-col gap-3 min-w-[140px]">
                             <h4 className="font-semibold mb-1">Perusahaan</h4>
-                            {company.map((item) => (
-                                <a
-                                    key={item}
-                                    href="#"
-                                    className="text-sm text-[#6B7280] hover:text-[#F59E0B]"
-                                >{item}</a>
-                            ))}
+                            {company.map((item) =>
+                                INTERNAL_LINKS[item] ? (
+                                    <Link
+                                        key={item}
+                                        to={INTERNAL_LINKS[item]}
+                                        className="text-sm text-[#6B7280] hover:text-[#F59E0B]"
+                                    >{item}</Link>
+                                ) : (
+                                    <a
+                                        key={item}
+                                        href="#"
+                                        className="text-sm text-[#6B7280] hover:text-[#F59E0B]"
+                                    >{item}</a>
+                                )
+                            )}
                         </div>
                         <div className="flex flex-col gap-3 min-w-[100px]">
                             <h4 className="font-semibold mb-1">Komunitas</h4>

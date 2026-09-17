@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import InputField from "../components/InputField";
 import PhoneInputField from "../components/PhoneInputField";
 import AuthButton from "../components/AuthButton";
 import GoogleButton from "../components/GoogleButton";
+import { login } from "../utils/storage";
 
 export default function Register() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from;
 
     const [form, setForm] = useState({
         fullName: "",
@@ -34,8 +37,11 @@ export default function Register() {
             return;
         }
 
-        // simulasi register berhasil
-        navigate("/login");
+        // simulasi register berhasil -> otomatis login lalu balik ke
+        // halaman yang tadi memicu login (kalau ada), atau ke Beranda.
+        login({ name: fullName, email });
+        const redirectTo = from ? `${from.pathname || ""}${from.search || ""}` || "/home" : "/home";
+        navigate(redirectTo, { replace: true });
     };
 
     return (

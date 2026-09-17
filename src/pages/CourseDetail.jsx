@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CourseCard from "../components/CourseCard";
 import { fetchCourses } from "../store/redux/coursesSlice";
+import { isLoggedIn } from "../utils/storage";
 import avatarUser from "../assets/avatarnavbar.png";
 
 export default function CourseDetail() {
@@ -65,6 +66,16 @@ export default function CourseDetail() {
 
     const toggleSection = (index) => {
         setOpenSection((prev) => (prev === index ? -1 : index));
+    };
+
+    // Beli Sekarang butuh login. Kalau belum, lempar ke /login dan bawa
+    // tujuan checkout kelas ini supaya setelah login langsung lanjut beli.
+    const handleBuyNow = () => {
+        if (!isLoggedIn()) {
+            navigate("/login", { state: { from: { pathname: `/checkout/${course.id}` } } });
+            return;
+        }
+        navigate(`/checkout/${course.id}`);
     };
 
     return (
@@ -259,7 +270,7 @@ export default function CourseDetail() {
 
                         <button
                             type="button"
-                            onClick={() => navigate(`/checkout/${course.id}`)}
+                            onClick={handleBuyNow}
                             className="w-full h-11 rounded-md bg-[#22AD5C] hover:bg-[#1c9950] text-white font-medium transition"
                         >
                             Beli Sekarang
